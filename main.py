@@ -2,6 +2,8 @@
 
 import fitz
 import os
+import argparse
+
 from langchain_openai import OpenAI
 from langchain.prompts import PromptTemplate
 
@@ -15,9 +17,18 @@ def extract_text_from_pdf(pdf_path) -> str:
     except Exception as e:
         return f"Error extracting text from {pdf_path}: {e}"
 
+def query_llm(llm_chain, question):
+    response = llm_chain.invoke({"question": question})
+    return response
+
 def main():
-    model_name = "gpt-4"
-    temperature = 0.5
+    parser = argparse.ArgumentParser(description="Chat with a PDF file using LangChain and OpenAI.")
+    parser.add_argument("--model", default = "gpt-4", help="The model name to use (default: gpt-4).")
+    parser.add_argument("--temperature", default = 0.5, type=float, help="The temperature to use (default: 0.5).")
+    args = parser.parse_args()
+
+    model_name = args.model
+    temperature = args.temperature
 
     if "OPENAI_API_KEY" not in os.environ:
         print("Error: OPENAI_API_KEY environment variable not set.")
@@ -51,7 +62,7 @@ def main():
                 if question.lower() == "quit":
                     print("Exiting program...")
                     break
-                response = llm_chain.invoke({"question": question})
+                response = query_llm(llm_chain, question)
                 if response:
                     print(f"Answer: {response}")
 
