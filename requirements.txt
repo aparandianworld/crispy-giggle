@@ -1,1 +1,5 @@
 pymupdf
+langchain
+openai
+langchain-community
+langchain-openai
