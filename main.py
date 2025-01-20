@@ -41,6 +41,10 @@ def main():
                 return
 
             extracted_text = extract_text_from_pdf(pdf_path).strip()
+            max_length = 5000 # safe with gpt-4 w/ 8k context window
+            if len(extracted_text) > max_length:
+                extracted_text = extracted_text[:max_length]
+
             assistant_template = f"""
             {extracted_text}
             You are an experienced hotel manager and provide assistance regarding general information about the hotel. Please do not provide any information outside of the context of the hotel.
